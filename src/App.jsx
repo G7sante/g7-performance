@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { 
   ChevronRight, ChevronLeft, Printer, Activity, ShieldCheck, Check, 
   Send, Lock, RefreshCw, CalendarPlus, ChevronDown, LogOut, Volume2,
@@ -158,7 +158,7 @@ const callGemini = async (prompt) => {
     });
     const data = await res.json();
     return data.candidates?.[0]?.content?.parts?.[0]?.text || "Erreur IA.";
-  } catch (e) { return "Service indisponible."; }
+  } catch { return "Service indisponible."; }
 };
 
 // --- COMPOSANTS UI ---
@@ -251,11 +251,15 @@ const InputField = ({ question, value, onChange }) => {
 // --- APP PRINCIPALE ---
 export default function App() {
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const [answers] = useState({});
   const [anamnese, setAnamnese] = useState({ name: '', dob: '', nam: '', email: '', weight: '', height: '', sex: '', date: new Date().toLocaleDateString() });
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [showClinician, setShowClinician] = useState(false);
+
+  const handleAnswer = () => {
+    // Placeholder pour la gestion des réponses
+  };
 
   const calcBMI = () => {
     const w = parseFloat(anamnese.weight), h = parseFloat(anamnese.height);
