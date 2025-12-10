@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { 
+  ChevronRight, ChevronLeft, Printer, Activity, ShieldCheck, Check, 
+  Send, Lock, RefreshCw, CalendarPlus, ChevronDown, LogOut, Volume2,
+  AlertTriangle, FileText, Stethoscope, Heart, Brain, Zap, 
+  Utensils, Eye, Move, Thermometer, Droplets, Dna,
+  Battery, Users, Moon, Lightbulb, UserCheck, Flame, Clipboard, Trash2, Mail,
+  Star, Coffee, Home, Briefcase, Smile, Frown, Meh, AlertCircle, PlusCircle, User, Calendar, CreditCard, Smartphone, AtSign, Sparkles, Unlock, FlaskConical, Scale, Ruler, Pill
+} from 'lucide-react';
 
 // --- CONFIGURATION API GEMINI ---
-// Votre clé est déjà configurée ci-dessous
 const apiKey = "AIzaSyCf2QHjWZKUdDxcOq6CzR5lD7JwzbBmBV8"; 
 
 // --- CONFIGURATION MARQUE & CLINIQUE ---
@@ -121,7 +128,6 @@ const analyzeRecommendations = (answers, bmi) => {
 
   if (bmi && bmi > 25) recs.push(`⚖️ Gestion de poids (IMC: ${bmi})`);
   
-  // Dépistage Métabolique
   if ((answers['q_findrisc_1'] && !has('q_findrisc_1', 'Aucun')) || 
       (answers['q_findrisc_2'] && !has('q_findrisc_2', 'Non')) || 
       (bmi > 27) ||
@@ -129,12 +135,8 @@ const analyzeRecommendations = (answers, bmi) => {
     recs.push("🩸 Dépistage Métabolique (Afinion 2 : HbA1c + Lipides)");
   }
 
-  // Risque Rénal
-  const urineIssues = hasAny('q_urine');
-  const hydration = hasOption(answers, 'q_urine', 'foncées');
-  if (urineIssues || hydration) recs.push("💧 Analyse Urinaire (11 paramètres)");
+  if (hasAny('q_urine') || hasOption(answers, 'q_urine', 'foncées')) recs.push("💧 Analyse Urinaire (11 paramètres)");
 
-  // Inflammation
   const inflamSigns = hasAny('q6');
   const pain = answers['q5']?.choice === 'Oui';
   if (inflamSigns || pain) recs.push("🔥 Bilan Inflammatoire");
@@ -300,15 +302,15 @@ export default function App() {
         {step > 0 && step <= FORM_STRUCTURE.length && <div className="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm">Étape {step} / {FORM_STRUCTURE.length}</div>}
       </div>
 
-      {/* CARTE PRINCIPALE */}
-      <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl shadow-slate-200/50 overflow-hidden min-h-[600px] flex flex-col border border-slate-100 relative">
+      {/* CARTE PRINCIPALE - Centrée et Aérée */}
+      <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl shadow-slate-200/50 overflow-hidden min-h-[600px] flex flex-col border border-slate-100 relative mx-auto my-auto">
         
         {step === 0 && (
           <div className="p-8 md:p-12 flex flex-col items-center justify-center flex-1 text-center animate-in fade-in zoom-in duration-500">
             {BRAND_CONFIG.logoUrl ? (
                <img src={BRAND_CONFIG.logoUrl} alt="Logo" className="h-24 mb-6 object-contain drop-shadow-sm" />
             ) : (
-               <div className="bg-gradient-to-tr from-teal-50 to-teal-100 p-6 rounded-full mb-6 text-teal-600 shadow-inner"><span className="text-4xl">💼</span></div>
+               <div className="bg-gradient-to-tr from-teal-50 to-teal-100 p-6 rounded-full mb-6 text-teal-600 shadow-inner text-4xl">💼</div>
             )}
             <h2 className="text-3xl font-bold mb-3 text-slate-900">{BRAND_CONFIG.formName}</h2>
             <p className="text-slate-500 mb-8 max-w-md text-lg leading-relaxed">Investigation des causes physiques aux déséquilibres mentaux & émotionnels.</p>
@@ -389,7 +391,7 @@ export default function App() {
                   {/* IA */}
                   {!aiAnalysis ? (
                     <button onClick={triggerAI} disabled={isAiLoading} className="w-full p-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold mb-4 flex justify-center items-center gap-3 transition-all shadow-lg shadow-indigo-900/50">
-                      {isAiLoading ? "Analyse en cours..." : "✨ Générer Hypothèses IA"}
+                      {isAiLoading ? "⏳" : "✨"} {isAiLoading ? "Analyse en cours..." : "Générer Hypothèses IA"}
                     </button>
                   ) : (
                     <div className="bg-slate-800 p-4 rounded-xl text-xs text-indigo-100 font-mono whitespace-pre-wrap max-h-80 overflow-y-auto mb-4 border border-slate-700 leading-relaxed shadow-inner">{aiAnalysis}</div>
