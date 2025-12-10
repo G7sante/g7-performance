@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  ChevronRight, ChevronLeft, Printer, Activity, ShieldCheck, Check, 
-  Send, Lock, RefreshCw, CalendarPlus, ChevronDown, LogOut, Volume2,
-  AlertTriangle, FileText, Stethoscope, Heart, Brain, Zap, 
-  Utensils, Eye, Move, Thermometer, Droplets, Dna,
-  Battery, Users, Moon, Lightbulb, UserCheck, Flame, Clipboard, Trash2, Mail,
-  Star, Coffee, Home, Briefcase, Smile, Frown, Meh, AlertCircle, PlusCircle, User, Calendar, CreditCard, Smartphone, AtSign, Sparkles, Unlock, FlaskConical, Scale, Ruler, Pill
-} from 'lucide-react';
 
 // --- CONFIGURATION API GEMINI ---
+// Votre clé est déjà configurée ci-dessous
 const apiKey = "AIzaSyCf2QHjWZKUdDxcOq6CzR5lD7JwzbBmBV8"; 
 
 // --- CONFIGURATION MARQUE & CLINIQUE ---
@@ -26,7 +19,7 @@ const FORM_STRUCTURE = [
   {
     id: 's1',
     title: "1. Le Frein Principal",
-    icon: <AlertCircle className="w-6 h-6 text-red-500" />,
+    icon: "🛑",
     description: "Motif & Impact sur la performance",
     questions: [
       { 
@@ -42,7 +35,7 @@ const FORM_STRUCTURE = [
   {
     id: 's2',
     title: "2. Métabolique & FINDRISC",
-    icon: <Activity className="w-6 h-6 text-blue-500" />,
+    icon: "🩺",
     description: "Facteurs de risques (Diabète/Coeur)",
     questions: [
       { id: 'q4', type: 'slider', label: "Niveau d'énergie au réveil (Batterie)", min: 0, max: 10, minLabel: "À plat", maxLabel: "100%" },
@@ -54,7 +47,7 @@ const FORM_STRUCTURE = [
   {
     id: 's3',
     title: "3. Douleur & Inflammation",
-    icon: <Thermometer className="w-6 h-6 text-orange-500" />,
+    icon: "🔥",
     description: "Signes d'inflammation systémique",
     questions: [
       { id: 'q5', type: 'conditional_pqrst', label: "Avez-vous des douleurs physiques récurrentes ?", trigger: "Oui", options: ["Non", "Oui"] },
@@ -64,7 +57,7 @@ const FORM_STRUCTURE = [
   {
     id: 's4',
     title: "4. Cerveau & Cognition",
-    icon: <Brain className="w-6 h-6 text-purple-500" />,
+    icon: "🧠",
     description: "Charge mentale & Neuro-transmission",
     questions: [
       { id: 'q7', type: 'radio', label: "Ressentez-vous du 'Brouillard Mental' ?", options: ["Jamais", "Parfois", "Souvent", "Constant"] },
@@ -75,7 +68,7 @@ const FORM_STRUCTURE = [
   {
     id: 's5',
     title: "5. Axe Intestin-Cerveau",
-    icon: <Utensils className="w-6 h-6 text-green-500" />,
+    icon: "🥗",
     description: "Métabolisme & Microbiote",
     questions: [
       { id: 'q13', type: 'radio', label: "Lien Repas-Mental : Baisse d'énergie après manger ?", options: ["Non, énergie stable", "Oui, coup de barre", "Oui, brouillard mental"] },
@@ -86,7 +79,7 @@ const FORM_STRUCTURE = [
   {
     id: 's6',
     title: "6. Hygiène de Vie",
-    icon: <Moon className="w-6 h-6 text-indigo-500" />,
+    icon: "🌙",
     description: "Récupération & Habitudes",
     questions: [
       { id: 'q10', type: 'number', label: "Heures de sommeil réel par nuit" },
@@ -97,7 +90,7 @@ const FORM_STRUCTURE = [
   {
     id: 's7',
     title: "7. Clinique & Sécurité",
-    icon: <ShieldCheck className="w-6 h-6 text-teal-500" />,
+    icon: "🛡️",
     description: "Équipe & Pharma",
     questions: [
       { id: 'q_allergies', type: 'text', label: "Allergies connues (Rx, Aliments, Latex) ?" },
@@ -111,7 +104,7 @@ const FORM_STRUCTURE = [
   {
     id: 's8',
     title: "Projection",
-    icon: <Star className="w-6 h-6 text-yellow-500" />,
+    icon: "⭐",
     description: "La Question Magique",
     questions: [
       { id: 'q19_why', type: 'radio', label: "Motivation actuelle (Dopamine) :", options: ["Mission / Sens", "Discipline / Devoir", "Perte de sens"] },
@@ -120,7 +113,7 @@ const FORM_STRUCTURE = [
   }
 ];
 
-// --- LOGIQUE METIER ---
+// --- LOGIQUE METIER (Moteur) ---
 const analyzeRecommendations = (answers, bmi) => {
   const recs = ["Signes Vitaux (Standard)"];
   const has = (id, txt) => (answers[id] || "").toLowerCase().includes(txt.toLowerCase());
@@ -128,6 +121,7 @@ const analyzeRecommendations = (answers, bmi) => {
 
   if (bmi && bmi > 25) recs.push(`⚖️ Gestion de poids (IMC: ${bmi})`);
   
+  // Dépistage Métabolique
   if ((answers['q_findrisc_1'] && !has('q_findrisc_1', 'Aucun')) || 
       (answers['q_findrisc_2'] && !has('q_findrisc_2', 'Non')) || 
       (bmi > 27) ||
@@ -135,8 +129,12 @@ const analyzeRecommendations = (answers, bmi) => {
     recs.push("🩸 Dépistage Métabolique (Afinion 2 : HbA1c + Lipides)");
   }
 
-  if (hasAny('q_urine') || hasOption(answers, 'q_urine', 'foncées')) recs.push("💧 Analyse Urinaire (11 paramètres)");
+  // Risque Rénal
+  const urineIssues = hasAny('q_urine');
+  const hydration = hasOption(answers, 'q_urine', 'foncées');
+  if (urineIssues || hydration) recs.push("💧 Analyse Urinaire (11 paramètres)");
 
+  // Inflammation
   const inflamSigns = hasAny('q6');
   const pain = answers['q5']?.choice === 'Oui';
   if (inflamSigns || pain) recs.push("🔥 Bilan Inflammatoire");
@@ -168,7 +166,7 @@ const PQRSTFields = ({ value, onChange }) => {
   return (
     <div className="mt-4 p-5 bg-red-50 border border-red-100 rounded-2xl space-y-4 animate-in fade-in shadow-sm">
       <div className="text-red-800 font-bold border-b border-red-200 pb-2 mb-2 flex items-center gap-2">
-        <Activity size={18}/> <span>Analyse PQRST de la douleur</span>
+        ⚡ Analyse PQRST de la douleur
       </div>
       <div className="grid gap-3">
         <div><label className="text-xs font-bold text-red-700 uppercase mb-1 block">P - Provoque</label><input className="w-full p-3 rounded-xl border border-red-200 bg-white focus:ring-2 focus:ring-red-500 outline-none" value={d.p} onChange={e=>up('p',e.target.value)} /></div>
@@ -194,7 +192,7 @@ const InputField = ({ question, value, onChange }) => {
       <textarea className={`${inputClasses} h-32 resize-none`} placeholder="Détaillez ici..." value={value || ''} onChange={e => onChange(e.target.value)} />
       {question.type === 'ai_textarea' && (
         <button onClick={handleAI} disabled={loading||!value} className="absolute top-3 right-3 text-xs bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-3 py-1.5 rounded-lg hover:shadow-lg transition-all flex items-center gap-1 disabled:opacity-50">
-          {loading ? <RefreshCw className="animate-spin w-3 h-3"/> : <Sparkles className="w-3 h-3"/>} {loading ? "..." : "Reformuler"}
+          {loading ? "..." : "✨ Reformuler IA"}
         </button>
       )}
     </div>
@@ -213,7 +211,7 @@ const InputField = ({ question, value, onChange }) => {
       {question.options.map(opt => (
         <button key={opt} onClick={() => onChange(opt)} className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between group ${value === opt ? 'bg-teal-600 border-teal-600 text-white shadow-md transform scale-[1.01]' : 'bg-white border-slate-200 hover:border-teal-300 text-slate-700 hover:bg-slate-50'}`}>
           <span className="font-medium">{opt}</span>
-          {value === opt && <Check className="text-white w-5 h-5"/>}
+          {value === opt && "✅"}
         </button>
       ))}
     </div>
@@ -227,7 +225,7 @@ const InputField = ({ question, value, onChange }) => {
         {question.options.map(opt => (
           <button key={opt} onClick={() => toggle(opt)} className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between group ${sel.includes(opt) ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' : 'bg-white border-slate-200 hover:border-indigo-300 text-slate-700 hover:bg-slate-50'}`}>
             <span className="font-medium">{opt}</span>
-            {sel.includes(opt) && <Check className="text-white w-5 h-5"/>}
+            {sel.includes(opt) && "☑️"}
           </button>
         ))}
       </div>
@@ -310,7 +308,7 @@ export default function App() {
             {BRAND_CONFIG.logoUrl ? (
                <img src={BRAND_CONFIG.logoUrl} alt="Logo" className="h-24 mb-6 object-contain drop-shadow-sm" />
             ) : (
-               <div className="bg-gradient-to-tr from-teal-50 to-teal-100 p-6 rounded-full mb-6 text-teal-600 shadow-inner"><Briefcase size={48}/></div>
+               <div className="bg-gradient-to-tr from-teal-50 to-teal-100 p-6 rounded-full mb-6 text-teal-600 shadow-inner"><span className="text-4xl">💼</span></div>
             )}
             <h2 className="text-3xl font-bold mb-3 text-slate-900">{BRAND_CONFIG.formName}</h2>
             <p className="text-slate-500 mb-8 max-w-md text-lg leading-relaxed">Investigation des causes physiques aux déséquilibres mentaux & émotionnels.</p>
@@ -338,7 +336,7 @@ export default function App() {
           <div className="flex-1 flex flex-col h-full">
             <div className="p-8 border-b border-slate-100 bg-white sticky top-0 z-10">
               <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-teal-50 text-teal-600 rounded-2xl shadow-sm">{FORM_STRUCTURE[step-1].icon}</div>
+                <div className="p-3 bg-teal-50 text-teal-600 rounded-2xl shadow-sm text-2xl">{FORM_STRUCTURE[step-1].icon}</div>
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900">{FORM_STRUCTURE[step-1].title}</h2>
                   <p className="text-slate-500">{FORM_STRUCTURE[step-1].description}</p>
@@ -371,32 +369,32 @@ export default function App() {
             <p className="text-slate-500 mb-10 max-w-md text-lg">Vos données ont été consolidées avec succès. Veuillez transmettre le rapport pour analyse.</p>
             
             <div className="w-full max-w-md space-y-4 mb-12">
-              <a href={`mailto:${BRAND_CONFIG.clinicEmail}?subject=G7 - ${anamnese.name}&body=${encodeURIComponent(genReport(true))}`} className="flex items-center justify-center gap-3 w-full p-5 bg-teal-50 border border-teal-200 rounded-2xl font-bold text-teal-800 hover:bg-teal-100 hover:scale-[1.02] transition-all cursor-pointer shadow-sm"><Mail size={20}/> Envoyer par Courriel</a>
-              <button onClick={() => window.print()} className="flex items-center justify-center gap-3 w-full p-5 bg-white border border-slate-200 rounded-2xl font-bold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all shadow-sm"><Printer size={20}/> Sauvegarder en PDF</button>
+              <a href={`mailto:${BRAND_CONFIG.clinicEmail}?subject=G7 - ${anamnese.name}&body=${encodeURIComponent(genReport(true))}`} className="flex items-center justify-center gap-3 w-full p-5 bg-teal-50 border border-teal-200 rounded-2xl font-bold text-teal-800 hover:bg-teal-100 hover:scale-[1.02] transition-all cursor-pointer shadow-sm">📧 Envoyer par Courriel</a>
+              <button onClick={() => window.print()} className="flex items-center justify-center gap-3 w-full p-5 bg-white border border-slate-200 rounded-2xl font-bold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all shadow-sm">🖨️ Sauvegarder en PDF</button>
             </div>
 
             <div className="w-full border-t border-slate-100 pt-8">
-              <button onClick={() => setShowClinician(!showClinician)} className="text-xs font-bold text-slate-300 uppercase flex items-center justify-center gap-2 hover:text-slate-500 transition-colors mx-auto"><Lock size={12}/> Zone Clinique Réservée</button>
+              <button onClick={() => setShowClinician(!showClinician)} className="text-xs font-bold text-slate-300 uppercase flex items-center justify-center gap-2 hover:text-slate-500 transition-colors mx-auto">🔒 Zone Clinique Réservée</button>
               
               {showClinician && (
                 <div className="mt-6 bg-slate-900 p-8 rounded-3xl text-left shadow-2xl border border-slate-800 animate-in slide-in-from-bottom-4">
-                  <div className="text-white font-bold mb-6 flex items-center gap-3 text-lg border-b border-slate-700 pb-4"><Unlock size={18} className="text-green-400"/> Espace Professionnel</div>
+                  <div className="text-white font-bold mb-6 flex items-center gap-3 text-lg border-b border-slate-700 pb-4">🔓 Espace Professionnel</div>
                   
                   {/* Suggestions */}
                   <div className="bg-slate-800/50 p-4 rounded-xl text-sm text-green-300 mb-6 border border-slate-700/50">
                     <p className="font-bold text-slate-400 mb-3 text-xs uppercase tracking-wider">Recommandations détectées :</p>
-                    {analyzeRecommendations(answers, calcBMI()).map((r, i) => <div key={i} className="mb-2 flex items-start gap-2"><FlaskConical size={14} className="mt-0.5 shrink-0 opacity-70"/> {r}</div>)}
+                    {analyzeRecommendations(answers, calcBMI()).map((r, i) => <div key={i} className="mb-2 flex items-start gap-2">⚡ {r}</div>)}
                   </div>
                   
                   {/* IA */}
                   {!aiAnalysis ? (
                     <button onClick={triggerAI} disabled={isAiLoading} className="w-full p-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold mb-4 flex justify-center items-center gap-3 transition-all shadow-lg shadow-indigo-900/50">
-                      {isAiLoading ? <RefreshCw className="animate-spin"/> : <Sparkles/>} {isAiLoading ? "Analyse en cours..." : "Générer Hypothèses IA"}
+                      {isAiLoading ? "Analyse en cours..." : "✨ Générer Hypothèses IA"}
                     </button>
                   ) : (
                     <div className="bg-slate-800 p-4 rounded-xl text-xs text-indigo-100 font-mono whitespace-pre-wrap max-h-80 overflow-y-auto mb-4 border border-slate-700 leading-relaxed shadow-inner">{aiAnalysis}</div>
                   )}
-                  <button onClick={copyToClipboard} className="w-full p-4 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-bold flex justify-center items-center gap-3 transition-colors"><Clipboard size={16}/> Copier Texte (Format Myle)</button>
+                  <button onClick={copyToClipboard} className="w-full p-4 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-bold flex justify-center items-center gap-3 transition-colors">📋 Copier Texte (Format Myle)</button>
                 </div>
               )}
             </div>
