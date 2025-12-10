@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 // --- CONFIGURATION API GEMINI ---
-const apiKey = ""; 
+const apiKey = "AIzaSyD-votreAIzaSyCf2QHjWZKUdDxcOq6CzR5lD7JwzbBmBV8";
 
 // --- CONFIGURATION MARQUE & CLINIQUE ---
 const BRAND_CONFIG = {
