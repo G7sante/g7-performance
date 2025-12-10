@@ -9,7 +9,8 @@ import {
 } from 'lucide-react';
 
 // --- CONFIGURATION API GEMINI ---
-const apiKey = "AIzaSyD-votreAIzaSyCf2QHjWZKUdDxcOq6CzR5lD7JwzbBmBV8";
+// La clé est vide par sécurité. Collez votre clé entre les guillemets ci-dessous.
+const apiKey = "AIzaSyCf2QHjWZKUdDxcOq6CzR5lD7JwzbBmBV8"; 
 
 // --- CONFIGURATION MARQUE & CLINIQUE ---
 const BRAND_CONFIG = {
@@ -29,7 +30,12 @@ const FORM_STRUCTURE = [
     icon: <AlertCircle size={24} className="text-red-500"/>,
     description: "Motif & Impact sur la performance",
     questions: [
-      { id: 'q1', type: 'ai_textarea', label: "Quel symptôme ou blocage limite le plus votre performance ou votre bien-être actuellement ?", aiPrompt: "Tu es un expert clinique. Reformule la plainte suivante. Sois concis." },
+      { 
+        id: 'q1', 
+        type: 'ai_textarea', 
+        label: "Quel symptôme ou blocage limite le plus votre performance ou votre bien-être actuellement ?",
+        aiPrompt: "Tu es un expert clinique. Reformule la plainte suivante en un terme médical ou fonctionnel précis. Sois concis." 
+      },
       { id: 'q2', type: 'radio', label: "Depuis combien de temps ce frein est-il présent ?", options: ["Récent (< 3 mois)", "Persistant (3-12 mois)", "Chronique (> 1 an)"] },
       { id: 'q3', type: 'slider', label: "Impact sur votre capacité décisionnelle ou opérationnelle (0-10)", min: 0, max: 10, minLabel: "Aucun", maxLabel: "Paralysant" }
     ]
@@ -41,9 +47,24 @@ const FORM_STRUCTURE = [
     description: "Facteurs de risques (Diabète/Coeur)",
     questions: [
       { id: 'q4', type: 'slider', label: "Niveau d'énergie au réveil (Batterie)", min: 0, max: 10, minLabel: "À plat", maxLabel: "100%" },
-      { id: 'q_findrisc_1', type: 'radio', label: "Antécédents Glycémiques & Tension (FINDRISC) :", options: ["Aucun historique", "On m'a déjà dit que j'avais du sucre élevé", "Je prends des médicaments pour la tension", "Les deux (Sucre + Tension)"] },
-      { id: 'q_findrisc_2', type: 'radio', label: "Hérédité (Diabète de type 1 ou 2 dans la famille) :", options: ["Non", "Oui (Grands-parents/Oncles/Tantes)", "Oui (Parents/Frères/Soeurs)"] },
-      { id: 'q_urine', type: 'checkbox', label: "Signes Urinaires & Rénaux :", options: ["Urines foncées/odorantes", "Douleurs au bas du dos (Reins)", "Besoin d'uriner la nuit (>2 fois)", "Brûlures / Inconfort", "Aucun"] }
+      { 
+        id: 'q_findrisc_1', 
+        type: 'radio', 
+        label: "Antécédents Glycémiques & Tension (FINDRISC) :", 
+        options: ["Aucun historique", "On m'a déjà dit que j'avais du sucre élevé", "Je prends des médicaments pour la tension", "Les deux (Sucre + Tension)"] 
+      },
+      { 
+        id: 'q_findrisc_2', 
+        type: 'radio', 
+        label: "Hérédité (Diabète de type 1 ou 2 dans la famille) :", 
+        options: ["Non", "Oui (Grands-parents/Oncles/Tantes)", "Oui (Parents/Frères/Soeurs)"] 
+      },
+      { 
+        id: 'q_urine', 
+        type: 'checkbox', 
+        label: "Signes Urinaires & Rénaux :", 
+        options: ["Urines foncées/odorantes", "Douleurs au bas du dos (Reins)", "Besoin d'uriner la nuit (>2 fois)", "Brûlures / Inconfort", "Aucun"] 
+      }
     ]
   },
   {
@@ -52,7 +73,14 @@ const FORM_STRUCTURE = [
     icon: <Thermometer size={24} className="text-orange-500"/>,
     description: "Signes d'inflammation systémique",
     questions: [
-      { id: 'q5', type: 'conditional_pqrst', label: "Avez-vous des douleurs physiques récurrentes ?", trigger: "Oui", options: ["Non", "Oui"], pqrstLabel: "Détails de la douleur (Inflammation ?)" },
+      { 
+        id: 'q5', 
+        type: 'conditional_pqrst', 
+        label: "Avez-vous des douleurs physiques récurrentes ?", 
+        trigger: "Oui", 
+        options: ["Non", "Oui"],
+        pqrstLabel: "Détails de la douleur (Inflammation ?)" 
+      },
       { id: 'q6', type: 'checkbox', label: "Autres signes inflammatoires :", options: ["Raideurs matinales", "Problèmes de peau", "Rétention d'eau", "Maux de tête fréquents", "Aucun"] }
     ]
   },
