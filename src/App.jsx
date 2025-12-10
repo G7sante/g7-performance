@@ -11,7 +11,7 @@ function App() {
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
-        <AIzaSyCf2QHjWZKUdDxcOq6CzR5lD7JwzbBmBV8>
+        </a>
         <a href="https://react.dev" target="_blank">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
@@ -29,7 +29,5 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+    );
 }
-
-export default App
